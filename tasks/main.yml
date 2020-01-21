@@ -1,0 +1,15 @@
+---
+- name: Git clone texinfo from {{ texinfo_repo }}
+  git:
+    repo: "{{ texinfo_repo }}"
+    dest: /tmp/texinfo
+
+- name: Make texinfo
+  make:
+    chdir: /tmp/texinfo
+
+- name: Make install texinfo
+  become: true
+  make:
+    chdir: /tmp/texinfo
+    target: install

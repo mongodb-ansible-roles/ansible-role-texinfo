@@ -1,0 +1,12 @@
+---
+- gather_facts: false
+  hosts: all
+  name: Prepare RedHat
+  tasks:
+    - name: Install needed packages
+      dnf:
+        disable_gpg_check: true
+        name:
+          - perl
+          - gcc
+        validate_certs: false

@@ -1,0 +1,28 @@
+---
+- name: Unarchive texinfo from {{ texinfo_package_url }}
+  unarchive:
+    dest: /tmp/
+    remote_src: yes
+    src: "{{ texinfo_package_url }}"
+
+- name: Configure texinfo
+  changed_when: false
+  command: ./configure
+  args:
+    chdir: /tmp/texinfo-{{ texinfo_version }}
+
+- name: Make texinfo
+  make:
+    chdir: /tmp/texinfo-{{ texinfo_version }}
+
+- name: Make install texinfo
+  become: true
+  make:
+    chdir: /tmp/texinfo-{{ texinfo_version }}
+    target: install
+
+- name: Create symlink
+  file:
+    state: link
+    src: /usr/local/bin/makeinfo
+    dest: /usr/bin/makeinfo

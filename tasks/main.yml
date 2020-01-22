@@ -1,15 +1,12 @@
 ---
-- name: Git clone texinfo from {{ texinfo_repo }}
-  git:
-    repo: "{{ texinfo_repo }}"
-    dest: /tmp/texinfo
+- name: Check if texinfo is already installed and get version
+  changed_when: false
+  shell: makeinfo --version | sed -n '1p' | awk '{print $4}'
+  ignore_errors: true
+  register: makeinfo_output
 
-- name: Make texinfo
-  make:
-    chdir: /tmp/texinfo
-
-- name: Make install texinfo
-  become: true
-  make:
-    chdir: /tmp/texinfo
-    target: install
+- include_tasks: install_texinfo.yml
+  when:
+    - makeinfo_output is defined
+    - makeinfo_output.stdout is defined
+    - makeinfo_output.stdout != texinfo_version|string
